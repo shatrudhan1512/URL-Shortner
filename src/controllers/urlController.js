@@ -21,10 +21,11 @@ redisClient.on("connect", async function () {
     console.log("Connected to Redis..");
 });
 
+
 const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
 const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 
-// redis password= F22C7UaLHXolOQqet2gUka5oRy9Aj3L3    > that is my redis atabse password
+// redis password= F22C7UaLHXolOQqet2gUka5oRy9Aj3L3    > that is my redis databse password
 // redis enpoint = redis-13142.c264.ap-south-1-1.ec2.cloud.redislabs.com:13142 > that is my port number and coneection string 
 
 // =======================================================================================================================================>
@@ -88,8 +89,6 @@ const genrateShortUrl = async function (req, res) {
 
         let createUrl = await urlModel.create(requestBody)
 
-        await SET_ASYNC(`${urlCode}`, JSON.stringify(createUrl))
-
         res.status(201).send({ status: true, data: createUrl })
 
     } catch (error) {
@@ -110,18 +109,11 @@ const getUrl = async function (req, res) {
         let cahcedUrlData = await GET_ASYNC(`${urlCode}`)
         
         let abc = JSON.parse(cahcedUrlData)
-
-         if (!cahcedUrlData){
-            return res.status(400).send({ status: false, msg: "this short url does not exist please provide valid url code " })
-         }
          
          if (cahcedUrlData) {
-
-            console.log("hyy i am if part of get api")
             
             res.redirect(301, `${abc.longUrl}`);
             
-
         } else {
 
             let urlData = await urlModel.findOne({ urlCode: urlCode })
@@ -132,7 +124,6 @@ const getUrl = async function (req, res) {
 
             await SET_ASYNC(`${urlCode}`, JSON.stringify(urlData))
 
-               console.log("i am else part of get api")
 
             res.redirect(301, `${urlData.longUrl}`);
             
