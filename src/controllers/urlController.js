@@ -74,12 +74,6 @@ const genrateShortUrl = async function (req, res) {
             return res.status(200).send({ status: true, msg: "This url already have shortUrl", data: checkUrl })
         }
 
-      try {
-            let reponse = await axios.get(`${requestBody.longUrl}`)
-          } catch (error) {
-            return res.status(400).send({ status: false, msg: "this is invalid url" })
-          }
-
         let urlCode = randomString.generate({ length: 5, charset: 'alphabetic' }).toLowerCase()
 
         let shortUrl = `http://localhost:3000/${urlCode}`
